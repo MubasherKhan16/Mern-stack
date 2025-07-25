@@ -11,7 +11,7 @@ const Nopage = () => {
           Sorry, the page you are looking for doesn't exist or has been moved.
         </p>
         <Link
-          to="/"
+          to="/home/homepage"
           className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-md hover:bg-indigo-700 transition"
         >
           Go Home

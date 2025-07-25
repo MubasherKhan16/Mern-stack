@@ -20,7 +20,7 @@ const AdminAddProduct = () => {
     image: '',
   });
 
-  const categories = ['Clothing', 'Footwear', 'Accessories', 'Other'];
+  const categories = ['Men','Women','Clothing', 'Footwear','Kids','Accessories', 'Other'];
   const brands = ['Nike', 'Adidas', 'Puma', 'Other'];
 
   const handleChange = (e) => {

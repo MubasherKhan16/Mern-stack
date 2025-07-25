@@ -19,14 +19,22 @@ import Home from "./pages/Home/Home";
 import AdminAddProduct from "./components/AdminLayout/AdminAddProduct";
 import AdminEditProduct from "./components/AdminLayout/AdminEditProduct";
 import Cart from "./pages/Cart/Cart";
+import Success from "./pages/Cart/Success";
+import HomePage from "./components/Home/HomePage";
+import Mainpage from "./components/Home/Mainpage";
+import Men from "./components/Home/Men";
+import Women from "./components/Home/Women";
+import Kids from "./components/Home/Kids";
+import Accessories from "./components/Home/Accessories";
+import Footwear from "./components/Home/Footwear";
 
 const App = () => {
-  const { isAuthenticated, user, isLoading } = useSelector(state => state.auth);
+  const { isAuthenticated, user, isLoading ,userId} = useSelector(state => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(checkAuth());
-  }, [dispatch]);
+  }, [dispatch,userId]);
 
   if (isLoading) {
     return (
@@ -72,8 +80,17 @@ const App = () => {
             <Home />
           </Authentication>
         } >
+        <Route path="homepage"  element={<HomePage/>}/>
+        <Route path="mainpage"  element={<Mainpage/>}/>
+        <Route path="men"  element={<Men/>}/>
+        <Route path="women"  element={<Women/>}/>
+        <Route path="kids"  element={<Kids/>}/>
+        <Route path="footwear"  element={<Footwear/>}/>
+        <Route path="accessories"  element={<Accessories/>}/>
           </Route>
+          
  <Route path='/cart' element={<Cart />} />
+ <Route path="/success" element={<Success />} />
         {/* ************ CATCH-ALL ROUTE ************ */}
         <Route path="*" element={<Nopage />} />
       </Routes>
