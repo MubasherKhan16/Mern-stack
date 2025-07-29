@@ -5,7 +5,6 @@ const addToCart = async (req, res) => {
   try {
     const { userId, productId, quantity } = req.body;
 
-    // Validate required fields
     if (!userId || !productId || !quantity) {
       return res.status(400).json({ 
         success: false, 
@@ -147,10 +146,35 @@ const deleteItem = async (req, res) => {
     res.status(500).json({ success: false, message: "Something went wrong" });
   }
 };
+const clearCart = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    if (!userId) {
+      return res.status(400).json({ success: false, message: "userId is required" });
+    }
+
+    const cart = await Cart.findOne({ userId });
+
+    if (!cart) {
+      return res.status(404).json({ success: false, message: "Cart not found" });
+    }
+
+    cart.items = []; // Remove all items
+    await cart.save();
+
+    res.status(200).json({ success: true, message: "Cart cleared successfully" });
+  } catch (error) {
+    console.error("Clear cart error:", error);
+    res.status(500).json({ success: false, message: "Something went wrong" });
+  }
+};
+
 
 module.exports = {
   addToCart,
   fetchCartItems,
   updateQuantity,
-  deleteItem
+  deleteItem,
+  clearCart
 };

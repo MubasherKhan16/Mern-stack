@@ -1,22 +1,29 @@
-const Order=require('../models/Orders')
+const Order = require('../models/Orders'); 
 
-const createOrder=async(req,res)=>{
+const createOrder = async (req, res) => {
   try {
-    const {productId,title,image,price,salePrice}=req.body;
-     
-    const newCreatedOrder=new Order( {productId,title,image,price,salePrice});
+    const { userId, items, totalAmount } = req.body;
+    console.log('Received order:', req.body); 
 
-    await newCreatedOrder.save();
+    const newOrder = new Order({
+      userId,
+      items,
+      totalAmount,
+    });
 
+    const savedOrder = await newOrder.save(); 
+
+    return res.status(201).json({
+      success: true,
+      data: savedOrder,
+    });
   } catch (error) {
-    console.error(error);
+    console.error('Order save error:', error);
     res.status(500).json({
-      success:false,
-      message:"Some error occured",
-    })
-    
+      success: false,
+      message: 'Failed to create order',
+    });
   }
-}
+};
 
-
-module.exports = {createOrder};
+module.exports = { createOrder };

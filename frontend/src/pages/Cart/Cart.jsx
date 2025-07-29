@@ -1,3 +1,4 @@
+// src/components/Cart.jsx
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchproductCart, deleteCartItem, updateCartItem } from '../../redux/Slices/CartSlice';
@@ -10,30 +11,21 @@ const stripePromise = loadStripe('pk_test_51Rlrb6QU12STd9GvoZvjGzJZLQM0lCNYUdtq3
 const Cart = () => {
   const dispatch = useDispatch();
   const [stripeLoading, setStripeLoading] = useState(false);
-  
 
- const userId = useSelector((state) => state.auth.userId);
-console.log(userId) 
-
-  
+  const userId = useSelector((state) => state.auth.userId);
   const { cartList, isLoading, error } = useSelector((state) => state.cartProducts || {});
-const safeCartList = Array.isArray(cartList) ? cartList : [];
+  const safeCartList = Array.isArray(cartList) ? cartList : [];
 
   useEffect(() => {
     if (userId) {
-      dispatch(fetchproductCart(userId))
-        .unwrap()
-        .then((result) => {
-          console.log(' Cart fetch successful:', result);
-        })
-        .catch((error) => {
-          console.error(' Cart fetch error:', error);
-        });
+      dispatch(fetchproductCart(userId)).unwrap().catch(err => {
+        console.error("Cart fetch error:", err);
+      });
     }
   }, [dispatch, userId]);
 
   const handleCheckout = async () => {
-    if (safeCartList.length === 0) return;
+    if (safeCartList.length === 0 || !userId) return toast.error("Cart is empty or user not found.");
 
     setStripeLoading(true);
 
@@ -49,28 +41,17 @@ const safeCartList = Array.isArray(cartList) ? cartList : [];
         }))
       });
 
-      const sessionId = response.data.id;
-      console.log(' Stripe Session ID:', sessionId);
-
       const stripe = await stripePromise;
-
-      if (!stripe) {
-        toast.error("Stripe failed to load");
-        return;
-      }
+      if (!stripe) return toast.error("Stripe failed to load.");
 
       const { error } = await stripe.redirectToCheckout({
-        sessionId: sessionId
+        sessionId: response.data.id
       });
 
-      if (error) {
-        console.error(' Stripe redirect error:', error.message);
-        toast.error(error.message);
-      }
-
+      if (error) toast.error(error.message);
     } catch (err) {
-      console.error(' Checkout API error:', err);
-      toast.error('Checkout failed');
+      console.error("Checkout error:", err);
+      toast.error("Checkout failed.");
     } finally {
       setStripeLoading(false);
     }
@@ -79,50 +60,36 @@ const safeCartList = Array.isArray(cartList) ? cartList : [];
   const handleDelete = async (productId) => {
     try {
       await dispatch(deleteCartItem({ userId, productId })).unwrap();
-      toast.success('Item removed from cart');
-    } catch (error) {
-      toast.error('Failed to remove item');
-      console.error('Delete error:', error);
+      toast.success("Item removed from cart.");
+    } catch (err) {
+      toast.error("Failed to remove item.");
     }
   };
 
-  const handleQuantityChange = async (productId, newQuantity) => {
+  const handleQuantityChange = async (productId, quantity) => {
+    if (quantity < 1) return;
     try {
-      await dispatch(updateCartItem({ userId, productId, quantity: newQuantity })).unwrap();
-    } catch (error) {
-      toast.error('Failed to update quantity');
-      console.error('Update quantity error:', error);
+      await dispatch(updateCartItem({ userId, productId, quantity })).unwrap();
+    } catch (err) {
+      toast.error("Failed to update quantity.");
     }
   };
 
   const total = safeCartList.reduce((sum, item) => {
     const price = item?.productId?.price || 0;
-    const quantity = item?.quantity || 0;
-    return sum + price * quantity;
+    return sum + price * item.quantity;
   }, 0);
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-64 p-6">
-        <p className="text-lg text-gray-600">Loading your cart...</p>
-      </div>
-    );
+    return <div className="p-6 text-center text-gray-600">Loading your cart...</div>;
   }
 
   if (error && !error.includes('Cart not found')) {
-    return (
-      <div className="p-6">
-        <p className="text-red-600 font-semibold">Error loading cart: {error}</p>
-      </div>
-    );
+    return <div className="p-6 text-red-600 font-semibold">Error: {error}</div>;
   }
 
   if (!userId) {
-    return (
-      <div className="p-6 text-center text-yellow-700 font-medium">
-        Please log in to view your cart.
-      </div>
-    );
+    return <div className="p-6 text-center text-yellow-700">Please log in to view your cart.</div>;
   }
 
   return (
@@ -134,12 +101,10 @@ const safeCartList = Array.isArray(cartList) ? cartList : [];
       ) : (
         <>
           <div className="bg-white rounded shadow mb-6">
-            {safeCartList.map((item, index) => {
-              const product = item?.productId;
-              if (!product) return null;
-
+            {safeCartList.map(item => {
+              const product = item.productId;
               return (
-                <div key={product._id} className="p-4 border-b last:border-none flex justify-between items-center">
+                <div key={product._id} className="p-4 border-b flex justify-between items-center">
                   <div className="flex items-center space-x-4">
                     <img src={product.image} alt={product.title} className="w-16 h-16 object-cover rounded" />
                     <div>
@@ -159,7 +124,7 @@ const safeCartList = Array.isArray(cartList) ? cartList : [];
           </div>
 
           <div className="bg-gray-100 p-6 rounded-lg">
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between mb-4">
               <span className="text-xl font-semibold">Total:</span>
               <span className="text-xl font-bold">${total.toFixed(2)}</span>
             </div>

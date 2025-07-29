@@ -27,6 +27,7 @@ import Women from "./components/Home/Women";
 import Kids from "./components/Home/Kids";
 import Accessories from "./components/Home/Accessories";
 import Footwear from "./components/Home/Footwear";
+import CheckoutSuccess from "./pages/Cart/Success";
 
 const App = () => {
   const { isAuthenticated, user, isLoading ,userId} = useSelector(state => state.auth);
@@ -90,7 +91,7 @@ const App = () => {
           </Route>
           
  <Route path='/cart' element={<Cart />} />
- <Route path="/success" element={<Success />} />
+ <Route path="/checkout-success" element={<CheckoutSuccess/>} />
         {/* ************ CATCH-ALL ROUTE ************ */}
         <Route path="*" element={<Nopage />} />
       </Routes>

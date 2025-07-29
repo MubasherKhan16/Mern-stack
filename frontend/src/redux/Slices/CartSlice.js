@@ -61,19 +61,37 @@ export const updateCartItem = createAsyncThunk(
   }
 );
 
+export const clearCartFromDB = createAsyncThunk(
+  'products/clearCartFromDB',
+  async (userId, { rejectWithValue }) => {
+    try {
+      const res = await axios.delete(`http://localhost:5000/api/cart/clear/${userId}`);
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+
 const cartSlice = createSlice({
   name: 'cartSlice',
   initialState,
-  reducers: {
-    clearCartError: (state) => {
-      state.error = null;
-    },
-    clearCartState: (state) => {
-      state.cartList = [];
-      state.isLoading = false;
-      state.error = null;
-    }
+ reducers: {
+  clearCartError: (state) => {
+    state.error = null;
   },
+  clearCartState: (state) => {
+    state.cartList = [];
+    state.isLoading = false;
+    state.error = null;
+  },
+  clearCart: (state) => {
+     console.log("Redux reducer: clearCart triggered");
+    state.cartList = [];  
+  }
+}
+,
   extraReducers: (builder) => {
     builder
       // Add to cart
@@ -136,8 +154,21 @@ const cartSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload?.message || action.error.message;
       })
+      .addCase(clearCartFromDB.pending, (state) => {
+  state.isLoading = true;
+  state.error = null;
+})
+.addCase(clearCartFromDB.fulfilled, (state) => {
+  state.isLoading = false;
+  state.cartList = [];
+  state.error = null;
+})
+.addCase(clearCartFromDB.rejected, (state, action) => {
+  state.isLoading = false;
+  state.error = action.payload?.message || action.error.message;
+})
   }
 })
 
-export const { clearCartError } = cartSlice.actions;
+export const { clearCartError,clearCart} = cartSlice.actions;
 export default cartSlice.reducer;
