@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  sessionId: { type: String, unique: true, required: true }, // 🔐 Prevent duplicates
   items: [
     {
       productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },

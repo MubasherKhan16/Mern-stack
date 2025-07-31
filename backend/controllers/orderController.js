@@ -1,29 +1,26 @@
 const Order = require('../models/Orders'); 
 
+
 const createOrder = async (req, res) => {
   try {
-    const { userId, items, totalAmount } = req.body;
-    console.log('Received order:', req.body); 
+    const { userId, items, totalAmount, sessionId } = req.body;
 
-    const newOrder = new Order({
-      userId,
-      items,
-      totalAmount,
-    });
+    if (!userId || !items || !totalAmount || !sessionId) {
+      return res.status(400).json({ success: false, message: 'Missing required fields' });
+    }
 
-    const savedOrder = await newOrder.save(); 
+    // 🔁 Check for existing order with same sessionId
+    const existingOrder = await Order.findOne({ sessionId });
+    if (existingOrder) {
+      return res.status(200).json({ success: true, message: 'Order already exists', order: existingOrder });
+    }
 
-    return res.status(201).json({
-      success: true,
-      data: savedOrder,
-    });
-  } catch (error) {
-    console.error('Order save error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to create order',
-    });
+    const newOrder = await Order.create({ userId, items, totalAmount, sessionId });
+
+    res.status(201).json({ success: true, message: 'Order created successfully', order: newOrder });
+  } catch (err) {
+    console.error("Create Order Error:", err);
+    res.status(500).json({ success: false, message: 'Server Error' });
   }
 };
-
-module.exports = { createOrder };
+  module.exports={createOrder}
