@@ -12,9 +12,7 @@ const Mainpage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-const { cartList = [] } = useSelector((state) => state.cartProducts || {});
-
-
+  const { cartList = [] } = useSelector((state) => state.cartProducts || {});
   const { productList = [], isLoading } = useSelector((state) => state.getProductSlice);
   const user = useSelector((state) => state.auth.user);
   const userId = user?.id;
@@ -89,50 +87,55 @@ const { cartList = [] } = useSelector((state) => state.cartProducts || {});
   };
 
   return (
-    <div className="flex px-8 py-6 bg-gray-100 min-h-screen gap-6">
-      <aside className="w-64 bg-white p-6 rounded-2xl shadow-md">
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold mb-3 border-b pb-2">Category</h2>
-          {categories.map((cat) => (
-            <label key={cat} className="block mb-2 text-gray-700">
-              <input
-                type="checkbox"
-                className="mr-2 text-blue-600"
-                checked={selectedCategories.includes(cat)}
-                onChange={() => handleCategoryChange(cat)}
-              />
-              {cat}
-            </label>
-          ))}
+    <div className="flex px-8 py-8 bg-gradient-to-br from-blue-50 to-gray-100 min-h-screen gap-8">
+      {/* Sidebar */}
+      <aside className="w-72 bg-white p-8 rounded-3xl shadow-xl border border-blue-100 sticky top-8 self-start">
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-4 border-b pb-3 text-blue-700">Category</h2>
+          <div className="space-y-2">
+            {categories.map((cat) => (
+              <label key={cat} className="flex items-center cursor-pointer hover:bg-blue-50 rounded px-2 py-1 transition">
+                <input
+                  type="checkbox"
+                  className="accent-blue-600 mr-3 h-4 w-4"
+                  checked={selectedCategories.includes(cat)}
+                  onChange={() => handleCategoryChange(cat)}
+                />
+                <span className="text-gray-700 font-medium">{cat}</span>
+              </label>
+            ))}
+          </div>
         </div>
         <div>
-          <h2 className="text-xl font-semibold mb-3 border-b pb-2">Brand</h2>
-          {brands.map((brand) => (
-            <label key={brand} className="block mb-2 text-gray-700">
-              <input
-                type="checkbox"
-                className="mr-2 text-blue-600"
-                checked={selectedBrands.includes(brand)}
-                onChange={() => handleBrandChange(brand)}
-              />
-              {brand}
-            </label>
-          ))}
+          <h2 className="text-2xl font-bold mb-4 border-b pb-3 text-blue-700">Brand</h2>
+          <div className="space-y-2">
+            {brands.map((brand) => (
+              <label key={brand} className="flex items-center cursor-pointer hover:bg-blue-50 rounded px-2 py-1 transition">
+                <input
+                  type="checkbox"
+                  className="accent-blue-600 mr-3 h-4 w-4"
+                  checked={selectedBrands.includes(brand)}
+                  onChange={() => handleBrandChange(brand)}
+                />
+                <span className="text-gray-700 font-medium">{brand}</span>
+              </label>
+            ))}
+          </div>
         </div>
       </aside>
 
       {/* Main Content */}
       <main className="flex-1">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold text-gray-800">All Products</h2>
-          <div className="flex items-center gap-4">
-            <span className="text-gray-600 text-sm">
-              Showing <span className="text-blue-600 font-medium">{productList.length} Products</span>
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+          <h2 className="text-4xl font-extrabold text-blue-800 tracking-tight">All Products</h2>
+          <div className="flex items-center gap-6">
+            <span className="text-gray-600 text-base">
+              Showing <span className="text-blue-600 font-semibold">{productList.length} Products</span>
             </span>
             <select
               value={sortOption}
               onChange={handleSortChange}
-              className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+              className="border border-blue-300 rounded-lg px-4 py-2 text-base focus:ring-2 focus:ring-blue-400 bg-white shadow-sm"
             >
               <option value="">Default</option>
               <option value="high">Price: High to Low</option>
@@ -143,49 +146,61 @@ const { cartList = [] } = useSelector((state) => state.cartProducts || {});
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
           {isLoading ? (
-            <p className="text-center col-span-full">Loading products...</p>
+            <div className="col-span-full flex justify-center items-center h-96">
+              <p className="text-2xl font-semibold text-blue-500 animate-pulse">Loading products...</p>
+            </div>
           ) : productList.length > 0 ? (
             productList.map((product) => (
               <div
                 key={product._id}
-                className="bg-white rounded-2xl shadow-md hover:shadow-lg transition p-4 flex flex-col"
+                className="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all p-5 flex flex-col border border-blue-100"
               >
-                <img
-                  onClick={() => getproductDetails(product._id)}
-                  src={product.image}
-                  alt={product.title}
-                  className="h-40 w-full object-cover rounded-lg bg-gray-200 mb-4 cursor-pointer"
-                />
-                <h3 className="text-lg font-semibold text-gray-800 mb-1">{product.title}</h3>
-                <p className="text-sm text-gray-500 mb-1">{product.description}</p>
-                <p className="text-sm text-gray-500">
-                  Brand: <span className="text-gray-700 font-medium">{product.brand}</span>
-                </p>
-                <p className="text-sm text-gray-500">
-                  Category: <span className="text-gray-700 font-medium">{product.category}</span>
-                </p>
-                <p className="text-sm text-gray-500">
-                  Stock: <span className="text-green-600 font-semibold">{product.totalStock}</span>
-                </p>
-                <div className="mt-2">
-                  <span className="text-blue-600 font-bold text-lg">${product.price}</span>
+                <div className="relative group">
+                  <img
+                    onClick={() => getproductDetails(product._id)}
+                    src={product.image}
+                    alt={product.title}
+                    className="h-48 w-full object-cover rounded-xl bg-gray-200 mb-4 cursor-pointer group-hover:scale-105 transition-transform"
+                  />
+                  <button
+                    onClick={() => getproductDetails(product._id)}
+                    className="absolute top-2 right-2 bg-blue-600 text-white text-xs px-3 py-1 rounded-full shadow hover:bg-blue-700 opacity-0 group-hover:opacity-100 transition"
+                  >
+                    View
+                  </button>
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-1 truncate">{product.title}</h3>
+                <p className="text-sm text-gray-500 mb-2 line-clamp-2">{product.description}</p>
+                <div className="flex flex-wrap gap-2 mb-2">
+                  <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs font-medium">
+                    Brand: {product.brand}
+                  </span>
+                  <span className="bg-green-50 text-green-700 px-2 py-1 rounded text-xs font-medium">
+                    Category: {product.category}
+                  </span>
+                  <span className="bg-gray-50 text-gray-700 px-2 py-1 rounded text-xs font-medium">
+                    Stock: <span className="font-bold">{product.totalStock}</span>
+                  </span>
+                </div>
+                <div className="mt-2 flex items-center gap-2">
+                  <span className="text-blue-700 font-extrabold text-xl">${product.price}</span>
                   {product.salePrice && product.salePrice !== product.price && (
                     <span className="ml-2 line-through text-sm text-red-500">${product.salePrice}</span>
                   )}
                 </div>
                 <button
                   onClick={() => handleAddToCart(product._id)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 mt-4"
+                  className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-semibold py-2 px-4 rounded-xl shadow-md transition duration-300 mt-5"
                 >
                   Add to Cart
                 </button>
               </div>
             ))
           ) : (
-            <div className="flex justify-center items-center h-96 w-full ml-3 col-span-full">
-              <p className="text-xl font-bold text-gray-500">No products found. Try adjusting your filters.</p>
+            <div className="flex justify-center items-center h-96 w-full col-span-full">
+              <p className="text-2xl font-bold text-gray-400">No products found. Try adjusting your filters.</p>
             </div>
           )}
         </div>

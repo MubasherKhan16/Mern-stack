@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getproduct } from '../../redux/Slices/GetProductSlice';
 import { Link, useNavigate } from 'react-router-dom';
 import { addToCart } from '../../redux/Slices/CartSlice';
+import HeroSearch from '../common/HeroSearch';
 import toast from 'react-hot-toast';
 
 const sliderImages = [hero_1, hero_2, hero_3];
@@ -61,86 +62,105 @@ const HomePage = () => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
+      {/* Hero Search Section */}
+      <HeroSearch />
+
       {/* Hero Slider */}
-      <div className="relative h-[900px] overflow-hidden">
+      <div className="relative h-[600px] md:h-[900px] overflow-hidden">
         <img
           src={sliderImages[currentSlide]}
           alt="Hero Slide"
-          className="absolute inset-0 w-full h-full object-cover transition duration-1000"
+          className="absolute inset-0 w-full h-full object-cover transition duration-1000 scale-105"
         />
-        <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-white text-center px-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 drop-shadow-lg">
+        <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/40 to-transparent flex flex-col items-center justify-center text-white text-center px-4">
+          <h1 className="text-4xl md:text-6xl font-extrabold mb-4 drop-shadow-2xl tracking-tight">
             Greatest Sale of the Year is Now
           </h1>
-          <p className="mb-6 text-lg">Don’t miss out on our limited-time offers!</p>
+          <p className="mb-8 text-lg md:text-2xl font-medium drop-shadow-lg">Don’t miss out on our limited-time offers!</p>
           <Link to='/home/mainpage'>
-          <button className="px-6 py-3 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition">
-            Go to Collection
-          </button>
+            <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-400 text-white font-bold rounded-full shadow-lg hover:from-blue-700 hover:to-blue-500 transition-all duration-300 text-lg">
+              Go to Collection
+            </button>
           </Link>
         </div>
       </div>
 
       {/* Shop by Category */}
-      <div className="py-12 px-4 text-center bg-gray-50">
-        <h2 className="text-3xl md:text-4xl font-bold mb-10 text-gray-800">Shop by Category</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          {categories.map((cat, idx) => (
-            <div
-              key={idx}
-              className="bg-white shadow-md rounded-2xl p-6 flex flex-col items-center justify-center transition-transform transform hover:scale-105 hover:shadow-xl cursor-pointer group"
-            >
-              <div className="mb-4 bg-blue-100 p-4 rounded-full group-hover:bg-blue-500 transition-colors duration-300">
-                <div className="text-blue-600 group-hover:text-white">{cat.icon}</div>
-              </div>
-              <h3 className="font-semibold text-lg text-gray-700 group-hover:text-blue-600 transition-colors duration-300">
-                {cat.name}
-              </h3>
-            </div>
-          ))}
+      <div className="py-20 px-4 text-center bg-gradient-to-b from-white to-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="animate-fadeInUp">
+            <h2 className="text-3xl md:text-6xl font-extrabold mb-4 text-gradient tracking-tight">
+              Shop by Category
+            </h2>
+            <p className="text-gray-600 text-lg md:text-xl mb-16 max-w-2xl mx-auto">
+              Explore our carefully curated collections designed for every style and occasion
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 animate-fadeInUp">
+            {categories.map((cat, idx) => (
+              <Link key={idx} to={`/home/${cat.name.toLowerCase()}`}>
+                <div className="category-card rounded-3xl p-8 flex flex-col items-center justify-center cursor-pointer group animate-float" 
+                     style={{ animationDelay: `${idx * 0.1}s` }}>
+                  <div className="mb-6 bg-gradient-to-br from-blue-100 to-purple-100 p-6 rounded-full group-hover:from-blue-600 group-hover:to-purple-600 transition-all duration-500 shadow-lg group-hover:shadow-glow">
+                    <div className="text-blue-600 group-hover:text-white transition-colors duration-300">
+                      {cat.icon}
+                    </div>
+                  </div>
+                  <h3 className="font-bold text-xl text-gray-700 group-hover:text-blue-600 transition-colors duration-300 mb-2">
+                    {cat.name}
+                  </h3>
+                  <div className="w-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 group-hover:w-full transition-all duration-300"></div>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Featured Products */}
-      <div className="py-16 px-4 bg-white text-center">
-        <h2 className="text-3xl font-bold text-gray-800 mb-10">Featured Products</h2>
+      <div className="py-20 px-4 bg-gradient-to-b from-white to-gray-50 text-center">
+        <h2 className="text-3xl md:text-5xl font-extrabold text-gray-800 mb-12 tracking-tight">Featured Products</h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
           {isLoading ? (
-            <p className="text-center col-span-full">Loading products...</p>
+            <p className="text-center col-span-full text-lg font-semibold text-blue-600 animate-pulse">Loading products...</p>
           ) : products.length > 0 ? (
-            products.slice(0,6).map((product) => (
+            products.slice(0, 6).map((product) => (
               <div
                 key={product._id}
-                className="bg-white rounded-2xl shadow-md hover:shadow-lg transition p-4 flex flex-col"
+                className="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition p-6 flex flex-col border border-gray-100 group"
               >
-                <img
-                  onClick={() => handleProductClick(product._id)}
-                  src={product.image}
-                  alt={product.title}
-                  className="h-40 w-full object-cover rounded-lg bg-gray-200 mb-4 cursor-pointer"
-                />
-                <h3 className="text-lg font-semibold text-gray-800 mb-1">{product.title}</h3>
-                <p className="text-sm text-gray-500 mb-1 line-clamp-2">{product.description}</p>
-                <p className="text-sm text-gray-500">
-                  Brand: <span className="text-gray-700 font-medium">{product.brand}</span>
-                </p>
-                <p className="text-sm text-gray-500">
-                  Category: <span className="text-gray-700 font-medium">{product.category}</span>
-                </p>
-                <p className="text-sm text-gray-500">
-                  Stock: <span className="text-green-600 font-semibold">{product.totalStock}</span>
-                </p>
-                <div className="mt-2">
-                  <span className="text-blue-600 font-bold text-lg">${product.price}</span>
+                <div className="relative">
+                  <img
+                    onClick={() => handleProductClick(product._id)}
+                    src={product.image}
+                    alt={product.title}
+                    className="h-48 w-full object-cover rounded-xl bg-gray-200 mb-4 cursor-pointer group-hover:scale-105 transition-transform duration-300"
+                  />
                   {product.salePrice && product.salePrice !== product.price && (
-                    <span className="ml-2 line-through text-sm text-red-500">${product.salePrice}</span>
+                    <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                      Sale
+                    </span>
+                  )}
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-2">{product.title}</h3>
+                <p className="text-sm text-gray-500 mb-2 line-clamp-2">{product.description}</p>
+                <div className="flex flex-wrap justify-center gap-2 mb-2">
+                  <span className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-700 font-medium">Brand: {product.brand}</span>
+                  <span className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-700 font-medium">Category: {product.category}</span>
+                  <span className="text-xs bg-green-100 px-2 py-1 rounded text-green-700 font-semibold">Stock: {product.totalStock}</span>
+                </div>
+                <div className="mt-2 flex items-center justify-center gap-3">
+                  <span className="text-blue-600 font-bold text-2xl">${product.price}</span>
+                  {product.salePrice && product.salePrice !== product.price && (
+                    <span className="line-through text-lg text-red-500">${product.salePrice}</span>
                   )}
                 </div>
                 <button
                   onClick={() => handleAddToCart(product._id)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 mt-4"
+                  className="bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition duration-300 mt-6"
                 >
                   Add to Cart
                 </button>
@@ -148,7 +168,7 @@ const HomePage = () => {
             ))
           ) : (
             <div className="flex justify-center items-center h-96 w-full col-span-full">
-              <p className="text-xl font-bold text-gray-500">No products found.</p>
+              <p className="text-2xl font-bold text-gray-400">No products found.</p>
             </div>
           )}
         </div>
@@ -158,3 +178,4 @@ const HomePage = () => {
 };
 
 export default HomePage;
+

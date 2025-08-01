@@ -21,11 +21,11 @@ const Authentication = ({ isAuthenticated, user, children }) => {
   }
 
   if (isAuthenticated && isAuthRoute) {
-    return user?.role === 'admin' ? <Navigate to='/admin' /> : <Navigate to='/home' />
+    return user?.role === 'admin' ? <Navigate to='/admin/dashboard' /> : <Navigate to='/home/homepage' />
   }
 
   if (isAuthenticated && user?.role === 'admin' && !isAdminRoute) {
-    return <Navigate to='/admin' />
+    return <Navigate to='/admin/dashboard' />
   }
 
   if (isAuthenticated && user?.role !== 'admin' && isAdminRoute) {

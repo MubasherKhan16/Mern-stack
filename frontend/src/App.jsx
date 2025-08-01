@@ -8,7 +8,7 @@ import Signup from "./pages/authentication/Signup";
 import Admin from "./pages/Admin/Admin";
 import AdminProducts from "./components/AdminLayout/AdminProducts";
 import AdminOrder from "./components/AdminLayout/AdminOrder";
-import AdminFeatures from "./components/AdminLayout/AdminFeatures";
+import AdminDashboard from "./components/AdminLayout/AdminDashboard";
 import Nopage from "./pages/Nopage/Nopage";
 import Authentication from "./components/common/Authentication";
 import { Toaster } from 'react-hot-toast';
@@ -28,6 +28,8 @@ import Kids from "./components/Home/Kids";
 import Accessories from "./components/Home/Accessories";
 import Footwear from "./components/Home/Footwear";
 import CheckoutSuccess from "./pages/Cart/Success";
+import UserDashboard from "./components/User/UserDashboard";
+import SearchResults from "./pages/Search/SearchResults";
 
 const App = () => {
   const { isAuthenticated, user, isLoading ,userId} = useSelector(state => state.auth);
@@ -64,14 +66,16 @@ const App = () => {
         {/* ************ ADMIN ROUTES ************ */}
         <Route path="/admin" element={
           <Authentication isAuthenticated={isAuthenticated} user={user}>
-            <Admin />
+            {/* Check if user is admin */}
+            {user?.role === 'admin' ? <Admin /> : <Nopage />}
           </Authentication>
         }>
+          <Route index element={<AdminDashboard />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="products" element={<AdminProducts />} />
           <Route path="addproduct" element={<AdminAddProduct />} />
           <Route path="editproduct/:id" element={<AdminEditProduct />} />
           <Route path="orders" element={<AdminOrder />} />
-          <Route path="features" element={<AdminFeatures />} />
           <Route path="*" element={<Nopage />} />
         </Route>
 
@@ -88,9 +92,11 @@ const App = () => {
         <Route path="kids"  element={<Kids/>}/>
         <Route path="footwear"  element={<Footwear/>}/>
         <Route path="accessories"  element={<Accessories/>}/>
+        <Route path="dashboard"  element={<UserDashboard/>}/>
           </Route>
           
  <Route path='/cart' element={<Cart />} />
+ <Route path='/search' element={<SearchResults />} />
  <Route path="/checkout-success" element={<CheckoutSuccess/>} />
         {/* ************ CATCH-ALL ROUTE ************ */}
         <Route path="*" element={<Nopage />} />

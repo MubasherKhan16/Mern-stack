@@ -31,40 +31,53 @@ const Accessories = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen py-14 px-6 md:px-10">
-      <h2 className="text-4xl font-extrabold text-center text-gray-800 mb-10">Accessories Collection</h2>
+    <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 min-h-screen py-14 px-4 md:px-10">
+      <h2 className="text-5xl font-extrabold text-center text-purple-700 mb-12 tracking-tight drop-shadow-lg">
+        Accessories Collection
+      </h2>
 
       {isLoading ? (
         <div className="text-center text-xl text-gray-600 py-20">Loading products...</div>
       ) : error ? (
         <div className="text-center text-red-500 py-20">{error}</div>
       ) : accessoriesProducts?.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-10 max-w-7xl mx-auto">
           {accessoriesProducts.map((product) => (
             <div
               key={product._id}
-              className="bg-white rounded-2xl shadow-md hover:shadow-lg transition p-5 flex flex-col"
+              className="bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 p-6 flex flex-col border border-purple-100 relative group"
             >
-              <img
-                src={product.image}
-                alt={product.title}
-                className="w-full h-60 object-cover rounded-xl mb-4 bg-gray-200"
-              />
-              <h3 className="text-lg font-semibold text-gray-800 mb-1">{product.title}</h3>
-              <p className="text-sm text-gray-500 mb-1">{product.description}</p>
-              <p className="text-sm text-gray-500">Brand: <span className="text-gray-700 font-medium">{product.brand}</span></p>
-              <p className="text-sm text-gray-500">Stock: <span className="text-green-600 font-semibold">{product.totalStock}</span></p>
-
-              <div className="mt-2">
-                <span className="text-blue-600 font-bold text-lg">$ {product.salePrice ?? product.price}</span>
+              <div className="relative">
+                <img
+                  src={product.image}
+                  alt={product.title}
+                  className="w-full h-56 object-cover rounded-2xl mb-4 bg-gradient-to-tr from-purple-100 via-pink-100 to-blue-100 border border-purple-200"
+                />
                 {product.salePrice && product.salePrice !== product.price && (
-                  <span className="ml-2 line-through text-sm text-red-500">$ {product.price}</span>
+                  <span className="absolute top-3 left-3 bg-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                    Sale
+                  </span>
+                )}
+              </div>
+              <h3 className="text-xl font-bold text-purple-800 mb-2 group-hover:text-pink-600 transition">{product.title}</h3>
+              <p className="text-sm text-gray-500 mb-2">{product.description}</p>
+              <p className="text-sm text-gray-500 mb-1">
+                <span className="font-semibold text-purple-600">Brand:</span> {product.brand}
+              </p>
+              <p className="text-sm text-gray-500 mb-2">
+                <span className="font-semibold text-green-600">Stock:</span> {product.totalStock}
+              </p>
+
+              <div className="mt-2 flex items-center space-x-3">
+                <span className="text-pink-600 font-bold text-xl">$ {product.salePrice ?? product.price}</span>
+                {product.salePrice && product.salePrice !== product.price && (
+                  <span className="line-through text-sm text-gray-400">$ {product.price}</span>
                 )}
               </div>
 
               <button
                 onClick={() => handleAddToCart(product._id)}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 mt-4"
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-pink-600 hover:to-purple-600 text-white font-semibold py-2 px-4 rounded-xl shadow-md transition duration-300 mt-6 w-full"
               >
                 Add to Cart
               </button>
@@ -73,7 +86,7 @@ const Accessories = () => {
         </div>
       ) : (
         <div className="flex justify-center items-center h-96 w-full">
-          <p className="text-xl font-bold text-gray-500">No accessories found.</p>
+          <p className="text-2xl font-bold text-purple-400">No accessories found.</p>
         </div>
       )}
     </div>
