@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 export const createOrder = createAsyncThunk(
   'order/create', 
   async (orderData, { rejectWithValue }) => {
@@ -14,7 +16,7 @@ export const createOrder = createAsyncThunk(
         sessionId,
       };
 
-      const res = await axios.post('http://localhost:5000/api/order/orderdetail', payload);
+  const res = await axios.post(`${API}/api/order/orderdetail`, payload);
       
       // Handle rate limiting
       if (res.status === 429) {
@@ -36,7 +38,7 @@ export const getUserOrders = createAsyncThunk(
   'order/getUserOrders',
   async (userId, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/order/user/${userId}`);
+  const res = await axios.get(`${API}/api/order/user/${userId}`);
       return res.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -49,7 +51,7 @@ export const getOrderStats = createAsyncThunk(
   'order/getOrderStats',
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get('http://localhost:5000/api/admin/orders/stats/dashboard');
+  const res = await axios.get(`${API}/api/admin/orders/stats/dashboard`);
       return res.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -62,7 +64,7 @@ export const getAllOrders = createAsyncThunk(
   'order/getAllOrders',
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get('http://localhost:5000/api/admin/orders');
+  const res = await axios.get(`${API}/api/admin/orders`);
       return res.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -75,7 +77,7 @@ export const updateOrderStatus = createAsyncThunk(
   'order/updateOrderStatus',
   async ({ orderId, status }, { rejectWithValue }) => {
     try {
-      const res = await axios.put(`http://localhost:5000/api/admin/orders/${orderId}/status`, {
+      const res = await axios.put(`${API}/api/admin/orders/${orderId}/status`, {
         status
       });
       return res.data;

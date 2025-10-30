@@ -1,4 +1,4 @@
-require('dotenv').config(); 
+require('dotenv').config();
 
 const express = require('express')
 const mongoose = require('mongoose')
@@ -8,8 +8,8 @@ const authRouter = require('./routes/authRoutes')
 const productRouter = require('./routes/productRoutes')
 const getProductsRouter = require('./routes/getProducts')
 const cartRoutes = require('./routes/cartRoutes')
-const stripeRoutes = require('./routes/stripeRoutes') 
-const orderRoute = require('./routes/orderRoute') 
+const stripeRoutes = require('./routes/stripeRoutes')
+const orderRoute = require('./routes/orderRoute')
 const adminOrderRoutes = require('./routes/adminOrderRoutes');
 
 const app = express()
@@ -17,18 +17,25 @@ const app = express()
 const PORT = process.env.PORT || 5000;
 
 
-mongoose.connect('mongodb://mubasher:mubasher@ac-cflxfqx-shard-00-00.0c35z3b.mongodb.net:27017,ac-cflxfqx-shard-00-01.0c35z3b.mongodb.net:27017,ac-cflxfqx-shard-00-02.0c35z3b.mongodb.net:27017/?replicaSet=atlas-pywyaj-shard-0&ssl=true&authSource=admin')
+const MONGODB_URI = process.env.MONGODB_URI;
+if (!MONGODB_URI) {
+  console.error('MONGODB_URI is not set in environment variables. Exiting.');
+  process.exit(1);
+}
+
+mongoose.connect(MONGODB_URI)
   .then(() => {
-    console.log(" MongoDB connected successfully");
+    console.log('MongoDB connected successfully');
   })
   .catch((error) => {
-    console.log(" MongoDB connection error:", error);
+    console.error('MongoDB connection error:', error);
+    process.exit(1);
   });
 
 app.use(
   cors({
-    origin: 'http://localhost:5173',
-    methods: ['GET', 'POST', 'DELETE', 'PUT'],
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    methods: ['GET', 'POST', 'DELETE', 'PUT', 'OPTIONS'],
     allowedHeaders: [
       'Content-Type',
       'Authorization',

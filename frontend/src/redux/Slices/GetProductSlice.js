@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const initialState = {
   isLoading: false,
   productList: [],
@@ -13,7 +15,7 @@ export const getproduct = createAsyncThunk(
   'products/getproducts',
   async (queryString, thunkAPI) => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/getProducts/get?${queryString}`);
+  const res = await axios.get(`${API}/api/getProducts/get?${queryString}`);
       return res.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || 'Failed to fetch products');
@@ -39,7 +41,7 @@ export const getFilteredProducts = createAsyncThunk(
         queryParams.append('sortBy', filters.sortBy);
       }
       
-      const res = await axios.get(`http://localhost:5000/api/getProducts/get?${queryParams.toString()}`);
+  const res = await axios.get(`${API}/api/getProducts/get?${queryParams.toString()}`);
       return res.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || 'Failed to fetch products');
@@ -51,7 +53,7 @@ export const productDetails = createAsyncThunk(
   'products/productdetails',
   async (id) => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/getProducts/get/${id}`);
+  const res = await axios.get(`${API}/api/getProducts/get/${id}`);
       return res.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || 'Failed to fetch products');

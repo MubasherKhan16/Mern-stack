@@ -6,7 +6,9 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import Chatbot from '../../components/common/Chatbot';
 
-const stripePromise = loadStripe('pk_test_51Rlrb6QU12STd9GvoZvjGzJZLQM0lCNYUdtq3vOBChu4TZFYkZWMVP0xuN9wqKSTVvFhf70mWjovRnB1VVsBIncY00AU4OIGwT');
+const STRIPE_PK = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_51Rlrb6QU12STd9GvoZvjGzJZLQM0lCNYUdtq3vOBChu4TZFYkZWMVP0xuN9wqKSTVvFhf70mWjovRnB1VVsBIncY00AU4OIGwT';
+const stripePromise = loadStripe(STRIPE_PK);
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -51,7 +53,7 @@ const Cart = () => {
         return;
       }
 
-      const response = await axios.post('http://localhost:5000/api/checkout/create-checkout-session', {
+      const response = await axios.post(`${API}/api/checkout/create-checkout-session`, {
         userId,
         cartItems: validItems.map(item => ({
           productId: item.productId._id,

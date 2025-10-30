@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const initialState = {
   cartList: [],
   isLoading: false,
@@ -11,7 +13,7 @@ export const addToCart = createAsyncThunk(
   'products/addtocart',
   async ({ userId, productId, quantity }, { rejectWithValue }) => {
     try {
-      const res = await axios.post('http://localhost:5000/api/cart/add', {
+  const res = await axios.post(`${API}/api/cart/add`, {
         userId,
         productId,
         quantity
@@ -27,7 +29,7 @@ export const fetchproductCart = createAsyncThunk(
   'products/fetchproductCart',
   async (userId, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/cart/get/${userId}`);
+  const res = await axios.get(`${API}/api/cart/get/${userId}`);
       return res.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -39,7 +41,7 @@ export const deleteCartItem = createAsyncThunk(
   'products/deleteCartItem',
   async ({ userId, productId }, { rejectWithValue }) => {
     try {
-      const res = await axios.delete(`http://localhost:5000/api/cart/delete/${userId}/${productId}`);
+  const res = await axios.delete(`${API}/api/cart/delete/${userId}/${productId}`);
       return res.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -51,7 +53,7 @@ export const updateCartItem = createAsyncThunk(
   'products/updatecart',
   async ({ userId, productId, quantity }, { rejectWithValue }) => {
     try {
-      const res = await axios.put(`http://localhost:5000/api/cart/update/${userId}/${productId}`, {
+  const res = await axios.put(`${API}/api/cart/update/${userId}/${productId}`, {
         quantity
       });
       return res.data;
@@ -65,7 +67,7 @@ export const clearCartFromDB = createAsyncThunk(
   'products/clearCartFromDB',
   async (userId, { rejectWithValue }) => {
     try {
-      const res = await axios.delete(`http://localhost:5000/api/cart/clear/${userId}`);
+  const res = await axios.delete(`${API}/api/cart/clear/${userId}`);
       return res.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);

@@ -1,6 +1,8 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit'
 import axios from 'axios'
 
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const initialState={
   isLoading:false,
   productList : [],
@@ -8,7 +10,7 @@ const initialState={
 }
 
 export const addnewproduct=createAsyncThunk('/products/addnewproduct',async formData=>{
-  const result=await axios.post('http://localhost:5000/api/product/add',formData,{
+  const result=await axios.post(`${API}/api/product/add`,formData,{
     headers:{
       'Content-Type':'application/json'
     }
@@ -17,13 +19,13 @@ export const addnewproduct=createAsyncThunk('/products/addnewproduct',async form
 
 })
 export const fetchAllProduct=createAsyncThunk('/products/fetchallproduct',async ()=>{
-  const result=await axios.get('http://localhost:5000/api/product/fetch'
+  const result=await axios.get(`${API}/api/product/fetch`
   )
   return result.data
 
 })
 export const editproduct=createAsyncThunk('/products/editproduct',async ({id,formData})=>{
-  const result=await axios.put(`http://localhost:5000/api/product/edit/${id}`,formData,{
+  const result=await axios.put(`${API}/api/product/edit/${id}`,formData,{
     headers:{
       'Content-Type':'application/json'
     }
@@ -32,7 +34,7 @@ export const editproduct=createAsyncThunk('/products/editproduct',async ({id,for
 
 })
 export const deleteproduct=createAsyncThunk('/products/deleteproduct',async (id)=>{
-  const result=await axios.delete(`http://localhost:5000/api/product/delete/${id}`)
+  const result=await axios.delete(`${API}/api/product/delete/${id}`)
   return {id}
 
 })

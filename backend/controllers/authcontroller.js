@@ -42,14 +42,16 @@ const LoginUser=async(req,res)=>{
  try {
      const checkPasswordMatch=await bcrypt.compare(password,checkUser.password);
      if(!checkPasswordMatch) return res.json({success:false,message:'Your Password is incorrect.Please try again'})
-      const token=jwt.sign({
+       const token=jwt.sign({
         id:checkUser._id,
         email:checkUser.email,
         role:checkUser.role,
         userName:checkUser.userName,
-      },'CLIENT_SECRET_KEY',{expiresIn:'60min'})
+        }, process.env.JWT_SECRET || 'CLIENT_SECRET_KEY',{expiresIn:'60min'})
 
-      res.cookie('token',token,{httpOnly:true,secure:false}).json({
+        const cookieSecure = (process.env.COOKIE_SECURE === 'true');
+
+        res.cookie('token', token, { httpOnly: true, secure: cookieSecure }).json({
         success:true,
         message:'Logged in successfully',
         user:{
@@ -85,7 +87,7 @@ const authMiddleware=async(req,res,next)=>{
     message:"Unauthorized user"
   })
   try {
-    const decoded=jwt.verify(token,'CLIENT_SECRET_KEY');
+  const decoded=jwt.verify(token, process.env.JWT_SECRET || 'CLIENT_SECRET_KEY');
     req.user=decoded;
     next();
 

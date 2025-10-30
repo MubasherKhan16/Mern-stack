@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const initialState = {
   isAuthenticated: false,
   isLoading: true,
@@ -13,7 +15,7 @@ export const registerUser = createAsyncThunk(
   'auth/registerUser',
   async (formData, thunkAPI) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/signup', formData, {
+      const response = await axios.post(`${API}/api/auth/signup`, formData, {
         withCredentials: true,
       });
       return response.data;
@@ -28,7 +30,7 @@ export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (formData, thunkAPI) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', formData, {
+      const response = await axios.post(`${API}/api/auth/login`, formData, {
         withCredentials: true,
       });
       return response.data;
@@ -43,7 +45,7 @@ export const checkAuth = createAsyncThunk(
   'auth/checkAuth',
   async (_, thunkAPI) => {
     try {
-      const response = await axios.get('http://localhost:5000/api/auth/checkauth', {
+      const response = await axios.get(`${API}/api/auth/checkauth`, {
         withCredentials: true,
         headers: {
           'Cache-Control': 'no-store,no-cache,must-revalidate,proxy-revalidate',
@@ -66,7 +68,7 @@ export const logoutUser = createAsyncThunk(
   'auth/logoutUser',
   async (_, thunkAPI) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/logout', {}, {
+      const response = await axios.post(`${API}/api/auth/logout`, {}, {
         withCredentials: true,
       });
       return response.data;
