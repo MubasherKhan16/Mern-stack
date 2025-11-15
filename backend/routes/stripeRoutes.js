@@ -1,5 +1,9 @@
 const express = require('express');
 const router = express.Router();
+
+// ✅ Load environment variables FIRST
+require('dotenv').config();
+
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Cart = require('../models/Cart');
 const mongoose = require('mongoose');
@@ -8,17 +12,14 @@ router.post('/create-checkout-session', async (req, res) => {
   const { userId, cartItems } = req.body;
 
   try {
-    // Validate input
     if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ error: 'Invalid or missing userId' });
     }
 
-    // If cartItems are provided in request, use them (from frontend)
     let items;
     if (cartItems && Array.isArray(cartItems) && cartItems.length > 0) {
       items = cartItems;
     } else {
-      // Fallback: fetch from database
       const cart = await Cart.findOne({ userId: new mongoose.Types.ObjectId(userId) })
         .populate('items.productId');
 
@@ -35,28 +36,26 @@ router.post('/create-checkout-session', async (req, res) => {
       }));
     }
 
-    // Validate items
     if (!items || items.length === 0) {
       return res.status(400).json({ error: 'No items to checkout' });
     }
 
-    // Create line items for Stripe
     const lineItems = items.map(item => {
       if (!item.price || item.price <= 0 || !item.quantity || item.quantity <= 0) {
         throw new Error(`Invalid item data: ${item.name || 'Unknown item'}`);
       }
 
-      // Prepare product data - be careful with image URLs (Stripe has limits)
       const productData = {
-        name: (item.name || 'Product').substring(0, 100), // Limit name length
-        description: `Quantity: ${item.quantity}`.substring(0, 300), // Limit description
+        name: (item.name || 'Product').substring(0, 100),
+        description: `Quantity: ${item.quantity}`.substring(0, 300),
       };
 
-      // Only add images if they're valid and not too long
-      if (item.image && 
-          typeof item.image === 'string' && 
-          item.image.length < 2000 && 
-          (item.image.startsWith('http://') || item.image.startsWith('https://'))) {
+      if (
+        item.image &&
+        typeof item.image === 'string' &&
+        item.image.length < 2000 &&
+        (item.image.startsWith('http://') || item.image.startsWith('https://'))
+      ) {
         productData.images = [item.image];
       }
 
@@ -64,13 +63,12 @@ router.post('/create-checkout-session', async (req, res) => {
         price_data: {
           currency: 'usd',
           product_data: productData,
-          unit_amount: Math.round(item.price * 100), // Convert to cents
+          unit_amount: Math.round(item.price * 100),
         },
         quantity: item.quantity,
       };
     });
 
-    // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
@@ -84,13 +82,10 @@ router.post('/create-checkout-session', async (req, res) => {
 
     console.log('Stripe session created:', session.id);
     res.status(200).json({ id: session.id });
-    
   } catch (error) {
-    console.error("Stripe session creation error:", error);
-    
-    // Handle specific Stripe errors
+    console.error('Stripe session creation error:', error);
     let errorMessage = 'Failed to create checkout session';
-    
+
     if (error.message?.includes('URL must be 2048 characters or less')) {
       errorMessage = 'Product information too long. Please try with fewer items.';
     } else if (error.message?.includes('Invalid URL')) {
@@ -98,10 +93,10 @@ router.post('/create-checkout-session', async (req, res) => {
     } else if (error.type === 'StripeInvalidRequestError') {
       errorMessage = 'Invalid request to payment processor: ' + error.message;
     }
-    
-    res.status(500).json({ 
+
+    res.status(500).json({
       error: errorMessage,
-      details: error.message 
+      details: error.message,
     });
   }
 });
