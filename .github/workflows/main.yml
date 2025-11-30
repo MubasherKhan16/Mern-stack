@@ -61,7 +61,7 @@ jobs:
         working-directory: ./frontend
         run: |
           touch .env
-          echo "${{ secrets.PROD_FRONTEND_ENV }}" > .env.example
+          echo "${{ secrets.PROD_FRONTEND_ENV }}" > .env
 
       - name: Build frontend
         working-directory: ./frontend
