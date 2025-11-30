@@ -40,7 +40,7 @@ jobs:
           echo "${{ secrets.PROD_BACKEND_ENV }}" > .env
 
       - name: Start backend with PM2
-        working-directory: ./server
+        working-directory: ./backend
         run: |
           /home/ubuntu/.nvm/versions/node/v22.21.1/bin/pm2 restart backend || /home/ubuntu/.nvm/versions/node/v22.21.1/bin/pm2 start index.js --name backend
 
@@ -70,4 +70,4 @@ jobs:
       - name: Deploy frontend to Nginx
         run: |
           sudo rm -rf /var/www/html/*
-          sudo cp -r ./client/dist/* /var/www/html/
+          sudo cp -r ./frontend/dist/* /var/www/html/
