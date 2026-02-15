@@ -5,10 +5,11 @@ import { loadStripe } from '@stripe/stripe-js';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import Chatbot from '../../components/common/Chatbot';
+import { API_URL } from '../../utils/apiConfig';
 
 const STRIPE_PK = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_51Rlrb6QU12STd9GvoZvjGzJZLQM0lCNYUdtq3vOBChu4TZFYkZWMVP0xuN9wqKSTVvFhf70mWjovRnB1VVsBIncY00AU4OIGwT';
 const stripePromise = loadStripe(STRIPE_PK);
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API = API_URL;
 
 const Cart = () => {
   const dispatch = useDispatch();
